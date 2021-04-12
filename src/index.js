@@ -80,6 +80,11 @@ function Square(props) {
         resetPrompt = "";
         status = 'Next player: ' + (this.state.redIsNext ? "Red" : "Blue");
       }
+      if (this.redIsNext === false)
+      {
+        let i = getrandomint(42)
+        this.handleClick(i)
+      }
       return (
         <div>
           <div className="status">{status}</div>
