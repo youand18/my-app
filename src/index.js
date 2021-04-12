@@ -186,6 +186,7 @@ function Square(props) {
       return (
         <div>
           <h3>Made by David Sanders for CSCI 310: JavaScript</h3>
+          <p>v 0.1.1</p>
         </div>
       )
     }
