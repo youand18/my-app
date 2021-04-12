@@ -23,37 +23,43 @@ function Square(props) {
     </button>
   )
 }
-  
-
   class Board extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
         squares: Array(42).fill(null),
+        filled: Array(42).fill(false),
         redIsNext: true,
       };
     }
     resetBoard(){
       this.setState({
         squares: Array(42).fill(null),
+        filled: Array(42).fill(false),
         redIsNext: true,
       })
     }
+    getRandomInt(max) {
+      let i = Math.floor(Math.random() * max);
+      if (this.state.filled[i] === true) {
+        this.getRandomInt(42);
+      } else {
+        this.setState()
+        return i;
+      }
+    }
     blueTakeTurn() {
-      let i = this.getrandomint(42)
+      let i = this.getRandomInt(42);
       const squares = this.state.squares.slice();
       if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red")) {
         return;
-      }
-      while (squares[i] === "blue") {
-        this.blueTakeTurn();
       }
       squares[i] = this.state.redIsNext ? "red" : "blue";
       this.setState({
         squares: squares,
         redIsNext: !this.state.redIsNext,
+        filled: Array(i).fill(true), 
       })
-      return true;
     }
 
     handleClick(i) {
@@ -65,13 +71,11 @@ function Square(props) {
       this.setState({
         squares: squares,
         redIsNext: !this.state.redIsNext,
+        filled: Array[i] = true, 
       })
-      this.blueTakeTurn();
+    }
 
-    }
-    getRandomInt(max) {
-      return Math.floor(Math.random() * max);
-    }
+
 
     renderSquare(i) {
       return (<Square
@@ -83,7 +87,7 @@ function Square(props) {
     renderReset(i) {
       if (i) 
       return (<Square
-                value={0}
+                value={"green"}
                 onClick={() => this.resetBoard()}  
               />      
         );
@@ -92,8 +96,14 @@ function Square(props) {
 
     render() {
       let gameover = false;
+      let full = true;
       let currentTurn = this.state.redIsNext ? "blue" : "red";
       const winner = logic.winCheck(this.state.squares, currentTurn);
+      for (let i = 0; i < 42; i++)
+      {
+        //if (this.state.filled[i] === true) full = true;
+        if (this.state.filled[i] === false) full = false; 
+      }
       let status;
       let resetPrompt;
       if (winner != null) {
@@ -104,6 +114,12 @@ function Square(props) {
         resetPrompt = "";
         status = 'Next player: ' + (this.state.redIsNext ? "Red" : "Blue");
       }
+      if (full){
+        //status = "Tie Game...";
+      }
+      //if (currentTurn == "red"){
+        //this.blueTakeTurn(); 
+      //}
       return (
         <div>
           <div className="status">{status}</div>
@@ -167,7 +183,7 @@ function Square(props) {
           </div>
         </div>
       );
-    }
+    } 
   }
 
   class Instructions extends React.Component {
@@ -175,8 +191,8 @@ function Square(props) {
       return (
         <div>
         <h2 style={{color: "red"}}>Rules</h2>
-        <p>- Red plays first </p>
-        <p>- They click on any unplayed square to take their turn</p>
+        <p>- Red plays first, picking a square to change to their color </p>
+        <p>- They click on any unplayed square to claim it on their turn</p>
         <p>- Once red plays, blue goes in the same manner</p>
         <p>- Play continues until one side gets four in a row</p>
         <p>- In the case of the board filling up, neither player wins</p> 
@@ -190,7 +206,7 @@ function Square(props) {
       return (
         <div>
           <h3>Made by David Sanders for CSCI 310: JavaScript</h3>
-          <p>v 0.1.2</p>
+          <p>v 0.1.7.6</p>
         </div>
       )
     }
