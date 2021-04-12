@@ -175,7 +175,7 @@ function Square(props) {
   class Game extends React.Component {
     render() {
       return (
-
+      <div className="page">
         <div className="header">
           <Header />
         <div className="game">
@@ -190,6 +190,7 @@ function Square(props) {
         </div>
         <Credits/>
         </div>
+      </div>
       );
     }
   }
