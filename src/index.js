@@ -50,6 +50,9 @@ function Square(props) {
         redIsNext: !this.state.redIsNext,
       })
     }
+    getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
 
     renderSquare(i) {
       return (<Square
@@ -66,6 +69,19 @@ function Square(props) {
               />      
         );
       }
+
+    blueTakeTurn() {
+      let i = this.getrandomint(42)
+      const squares = this.state.squares.slice();
+      if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red") || squares[i]) {
+        return;
+      }
+      squares[i] = this.state.redIsNext ? "red" : "blue";
+      this.setState({
+        squares: squares,
+        redIsNext: !this.state.redIsNext,
+      })
+    }
     render() {
       let gameover = false;
       let currentTurn = this.state.redIsNext ? "blue" : "red";
@@ -82,8 +98,7 @@ function Square(props) {
       }
       if (this.redIsNext === false)
       {
-        let i = getrandomint(42)
-        this.handleClick(i)
+        this.blueTakeTurn();
       }
       return (
         <div>
