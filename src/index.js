@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom';
 import './index.css';
+
 
 const logic = require('./logic.js')
 
@@ -205,7 +206,7 @@ function Square(props) {
       return (
         <div>
           <h3>Made by David Sanders for CSCI 310: JavaScript</h3>
-          <p>v 0.1.7.6</p>
+          <p>v 0.1.7.7</p>
         </div>
       )
     }
@@ -235,6 +236,7 @@ function Square(props) {
     }
   }
   
+
   // ========================================
   
   ReactDOM.render(
