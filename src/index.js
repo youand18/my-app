@@ -96,13 +96,12 @@ function Square(props) {
 
     render() {
       let gameover = false;
-      let full = true;
+      let full = 0;
       let currentTurn = this.state.redIsNext ? "blue" : "red";
       const winner = logic.winCheck(this.state.squares, currentTurn);
       for (let i = 0; i < 42; i++)
       {
-        //if (this.state.filled[i] === true) full = true;
-        if (this.state.filled[i] === false) full = false; 
+        if (this.state.filled[i] === true) full++;
       }
       let status;
       let resetPrompt;
@@ -114,8 +113,8 @@ function Square(props) {
         resetPrompt = "";
         status = 'Next player: ' + (this.state.redIsNext ? "Red" : "Blue");
       }
-      if (full){
-        //status = "Tie Game...";
+      if (full >= 42){
+        status = "Tie Game...";
       }
       //if (currentTurn == "red"){
         //this.blueTakeTurn(); 
@@ -240,6 +239,6 @@ function Square(props) {
   
   ReactDOM.render(
     <Game />,
-    document.getElementById('root')
+    document.getElementById('root') || document.createElement('div')
   );
   

@@ -1,30 +1,32 @@
-import React from "react";
-import { render, unmountComponentAtNode } from "react-dom";
-import { act } from "react-dom/test-utils";
+import { render, screen } from '@testing-library/react';
 import Board from './index';
 import Header from './index';
 import Instructions from './index';
 import Credits from './index';
-
-it("renders squares", () => {
-    act(() => {
-      render(<Board />, container);
-    });
-    expect(container.textContent).toBe("");
+import Game from './index';
   
-    act(() => {
-      render(<Header />, container);
-    });
-    expect(container.textContent).toBe("Connect Four!");
-  
-    act(() => {
-      render(<Instructions />, container);
-    });
-    expect(container.textContent).toBe("Red plays first, picking a square to change to their color");
-
-    act(() => {
-        render(<Credits />, container);
-      });
-      expect(container.textContent).toBe("Made by David Sanders for CSCI 310: JavaScript");
+  test('Header test', () => {
+    render(<Header />);
+    const heading = screen.getByText(/Connect Four!/i);
+    expect(heading).toBeInTheDocument();
   });
-  
+  test('Instructions test', () => {
+    render(<Instructions />);
+    const heading = screen.getByText(/- Red plays first, picking a square to change to their color/i);
+    expect(heading).toBeInTheDocument();
+  });
+  test('Credits test', () => {
+    render(<Credits />);
+    const heading = screen.getByText(/Made by David Sanders for CSCI 310: JavaScript/i);
+    expect(heading).toBeInTheDocument();
+  });
+  test('Board test', () => {
+    render(<Board />);
+    const heading = screen.getByText(/Nexter player: Red/i);
+    expect(heading).toBeInTheDocument();
+  });
+  test('Game test', () => {
+    render(<Game />);
+    const heading = screen.getByText(/Connect Four!/i);
+    expect(heading).toBeInTheDocument();
+  });
