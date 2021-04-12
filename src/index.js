@@ -39,6 +39,23 @@ function Square(props) {
         redIsNext: true,
       })
     }
+    blueTakeTurn() {
+      let i = this.getrandomint(42)
+      const squares = this.state.squares.slice();
+      if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red")) {
+        return;
+      }
+      while (squares[i] === "blue") {
+        this.blueTakeTurn();
+      }
+      squares[i] = this.state.redIsNext ? "red" : "blue";
+      this.setState({
+        squares: squares,
+        redIsNext: !this.state.redIsNext,
+      })
+      return true;
+    }
+
     handleClick(i) {
       const squares = this.state.squares.slice();
       if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red") || squares[i]) {
@@ -49,6 +66,8 @@ function Square(props) {
         squares: squares,
         redIsNext: !this.state.redIsNext,
       })
+      this.blueTakeTurn();
+
     }
     getRandomInt(max) {
       return Math.floor(Math.random() * max);
@@ -70,18 +89,7 @@ function Square(props) {
         );
       }
 
-    blueTakeTurn() {
-      let i = this.getrandomint(42)
-      const squares = this.state.squares.slice();
-      if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red") || squares[i]) {
-        return;
-      }
-      squares[i] = this.state.redIsNext ? "red" : "blue";
-      this.setState({
-        squares: squares,
-        redIsNext: !this.state.redIsNext,
-      })
-    }
+
     render() {
       let gameover = false;
       let currentTurn = this.state.redIsNext ? "blue" : "red";
@@ -95,10 +103,6 @@ function Square(props) {
       } else {
         resetPrompt = "";
         status = 'Next player: ' + (this.state.redIsNext ? "Red" : "Blue");
-      }
-      if (this.redIsNext === false)
-      {
-        this.blueTakeTurn();
       }
       return (
         <div>
@@ -186,7 +190,7 @@ function Square(props) {
       return (
         <div>
           <h3>Made by David Sanders for CSCI 310: JavaScript</h3>
-          <p>v 0.1.1</p>
+          <p>v 0.1.2</p>
         </div>
       )
     }
