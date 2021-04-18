@@ -12,13 +12,17 @@ function verticalCheck(status, currentTurn)
             if (status[i] == currentTurn)
             {
                 connected += 1;
-                if (connected >= 4) return true;
+                if (connected >= 4) {
+                    console.log("Vertical Check Win");
+                    return true;
+                }
             } 
             else
             {
                 connected = 0;
             }
         }
+        connected = 0;
     }
     return false;
 }
@@ -33,7 +37,10 @@ function horizontalCheck(status, currentTurn)
         if (status[i] == currentTurn)
         {
             connected += 1;
-            if (connected >= 4) return true;
+            if (connected >= 4) {
+                console.log("Horizontal Check win");
+                return true;
+            }
         }
         else connected = 0;
     }
@@ -58,7 +65,10 @@ function diagonalCheck(status, currentTurn)
                     if(status[j+8] == currentTurn)
                     {
                         connected++;
-                        if (connected >= 4) return true;
+                        if (connected >= 4) {
+                            console.log("Diagonal Check Win");
+                            return true;
+                        }
                         j += 8;
                     }
                     else connected = 0;
@@ -73,7 +83,10 @@ function diagonalCheck(status, currentTurn)
                     if(status[x+6] == currentTurn)
                     {
                         connected++;
-                        if (connected >= 4) return true;
+                        if (connected >= 4) {
+                            console.log("Diagonal Check Win");
+                            return true;
+                        }
                         x += 6;
                     }
                     else connected = 0;

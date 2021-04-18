@@ -4,8 +4,6 @@ import './index.css';
 
 
 const logic = require('./logic.js')
-
-
 //<button className="square"  style={{ backgroundColor: this.state.boxColor }} onClick={() => this.setState({boxColor: "blue"})}></button>
            // {this.state.value}
   class Header extends React.Component {
@@ -18,48 +16,108 @@ const logic = require('./logic.js')
     }
   }
 
-function Square(props) {
-  return (
-    <button className="square" onClick={props.onClick} style={{backgroundColor: props.value}}>
-    </button>
-  )
-}
+  function Square(props) {
+    return (
+      <button className="square" onClick={props.onClick} style={{backgroundColor: props.value}}>
+      </button>
+    )
+  }
+  
   class Board extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
         squares: Array(42).fill(null),
-        filled: Array(42).fill(false),
         redIsNext: true,
       };
     }
     resetBoard(){
       this.setState({
         squares: Array(42).fill(null),
-        filled: Array(42).fill(false),
         redIsNext: true,
       })
     }
     getRandomInt(max) {
-      let i = Math.floor(Math.random() * max);
-      if (this.state.filled[i] === true) {
-        this.getRandomInt(42);
-      } else {
-        this.setState()
-        return i;
-      }
-    }
-    blueTakeTurn() {
-      let i = this.getRandomInt(42);
-      const squares = this.state.squares.slice();
       if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red")) {
         return;
       }
-      squares[i] = this.state.redIsNext ? "red" : "blue";
+      let squares = this.state.squares.slice();
+      let i = Math.floor(Math.random() * max);
+      if (squares[i] === null) {
+        return i;        
+      } else {
+        console.log("Random Int Reroll");
+        return this.getRandomInt(42);
+      }
+    }
+    blueTakeRandomTurn() {
+      let i = this.getRandomInt(42);
+      console.log(i);
+      let squares = this.state.squares.slice();
+      if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red")) {
+        return;
+      }
+      squares[i] = "blue";
+      console.log(this.state.squares)
       this.setState({
         squares: squares,
-        redIsNext: !this.state.redIsNext,
-        filled: Array(i).fill(true), 
+        redIsNext: true,
+      })
+    }
+    redTakeRandomTurn() {
+      let i = this.getRandomInt(42);
+      console.log(i);
+      let squares = this.state.squares.slice();
+      if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red")) {
+        return;
+      }
+      squares[i] = "red";
+      console.log(this.state.squares)
+      this.setState({
+        squares: squares,
+        redIsNext: false,
+      })
+    }
+    blueTakeDefensiveTurn() {
+      let i;
+      let squares = this.state.squares.slice();
+      if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red")) {
+        return;
+      }
+      let connected = 0;
+      for (i = 0; i < 42; i++){
+        if (squares[i] === "red") {
+          connected++;
+        } else {
+          connected = 0;
+        }
+        if ((connected >= 2) && ((squares[i+1] != "blue") || (squares[i-connected] != "blue"))) break;
+      }
+      if (connected >=2)
+      { 
+        if (squares[i+1] === null) 
+        {
+          console.log("Front Horizontal Defense");
+          squares[i+1] = "blue";
+        } else if (squares[i-connected] === null)
+        {
+          console.log("Back Horizontal Defense");
+          squares[i-connected] = "blue";
+        } else 
+        {
+          i = this.getRandomInt(42);
+          console.log("Random Pick Inside of Horizontal Connected");
+          squares[i] = "blue";
+        }
+      } else {
+        i = this.getRandomInt(42);
+        console.log("Random Pick Outside of Connected");
+        squares[i] = "blue";
+      }
+      console.log(this.state.squares)
+      this.setState({
+        squares: squares,
+        redIsNext: true,
       })
     }
 
@@ -72,7 +130,6 @@ function Square(props) {
       this.setState({
         squares: squares,
         redIsNext: !this.state.redIsNext,
-        filled: Array[i] = true, 
       })
     }
 
@@ -92,18 +149,24 @@ function Square(props) {
                 onClick={() => this.resetBoard()}  
               />      
         );
-      }
+    }
 
+    fullBoard() {
+      for (let i = 0; i < 42; i++)
+      {
+        if (this.state.squares[i] === null){
+          return false;
+        };
+      }
+      return true;
+    }
 
     render() {
       let gameover = false;
-      let full = 0;
+      let full = this.fullBoard();
       let currentTurn = this.state.redIsNext ? "blue" : "red";
       const winner = logic.winCheck(this.state.squares, currentTurn);
-      for (let i = 0; i < 42; i++)
-      {
-        if (this.state.filled[i] === true) full++;
-      }
+
       let status;
       let resetPrompt;
       if (winner != null) {
@@ -114,12 +177,14 @@ function Square(props) {
         resetPrompt = "";
         status = 'Next player: ' + (this.state.redIsNext ? "Red" : "Blue");
       }
-      if (full >= 42){
+      if (full){
         status = "Tie Game...";
       }
-      //if (currentTurn == "red"){
-        //this.blueTakeTurn(); 
-      //}
+      if (currentTurn == "red"){
+        //this.blueTakeRandomTurn();
+        this.blueTakeDefensiveTurn(); 
+      }
+      //if (currentTurn == "blue") this.redTakeRandomTurn();
       return (
         <div>
           <div className="status">{status}</div>
@@ -206,7 +271,7 @@ function Square(props) {
       return (
         <div>
           <h3>Made by David Sanders for CSCI 310: JavaScript</h3>
-          <p>v 0.1.7.7</p>
+          <p>v 0.1.8.4</p>
         </div>
       )
     }
