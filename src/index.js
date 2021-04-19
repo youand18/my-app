@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom';
 import './index.css';
 
-
+const fs = require('fs');
 const logic = require('./logic.js')
 //<button className="square"  style={{ backgroundColor: this.state.boxColor }} onClick={() => this.setState({boxColor: "blue"})}></button>
            // {this.state.value}
@@ -22,7 +22,7 @@ const logic = require('./logic.js')
       </button>
     )
   }
-  
+
   class Board extends React.Component {
     constructor(props) {
       super(props);
