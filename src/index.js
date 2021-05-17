@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom';
+import SignUp from './SignUp.jsx';
+import SignIn from './SignIn.jsx';
 import './index.css';
 
 const fs = require('fs');
 const logic = require('./logic.js')
+
 //<button className="square"  style={{ backgroundColor: this.state.boxColor }} onClick={() => this.setState({boxColor: "blue"})}></button>
            // {this.state.value}
   class Header extends React.Component {
@@ -23,7 +26,11 @@ const logic = require('./logic.js')
     )
   }
 
+
+
+
   class Board extends React.Component {
+    
     constructor(props) {
       super(props);
       this.state = {
@@ -78,47 +85,195 @@ const logic = require('./logic.js')
         redIsNext: false,
       })
     }
+
     blueTakeDefensiveTurn() {
       let i;
+      let played = false;
       let squares = this.state.squares.slice();
       if (logic.winCheck(this.state.squares, this.state.redIsNext ? "blue" : "red")) {
         return;
       }
-      let connected = 0;
       for (i = 0; i < 42; i++){
-        if (squares[i] === "red") {
-          connected++;
-        } else {
-          connected = 0;
-        }
-        if ((connected >= 2) && ((squares[i+1] != "blue") || (squares[i-connected] != "blue"))) break;
-      }
-      if (connected >=2)
-      { 
-        if (squares[i+1] === null) 
-        {
-          console.log("Front Horizontal Defense");
-          squares[i+1] = "blue";
-        } else if (squares[i-connected] === null)
-        {
-          console.log("Back Horizontal Defense");
-          squares[i-connected] = "blue";
-        } else 
-        {
-          i = this.getRandomInt(42);
-          console.log("Random Pick Inside of Horizontal Connected");
+        if (squares[i] === null){
           squares[i] = "blue";
+          if (logic.winCheck(squares, "blue")){
+            console.log("blue detected win");
+            played = true;
+            break;
+          }
+          squares = this.state.squares.slice();
         }
-      } else {
-        i = this.getRandomInt(42);
-        console.log("Random Pick Outside of Connected");
-        squares[i] = "blue";
       }
-      console.log(this.state.squares)
-      this.setState({
-        squares: squares,
-        redIsNext: true,
-      })
+      let connected = 0;
+      let connectedRequirement = 3;
+      for (connectedRequirement; connectedRequirement > 0; connectedRequirement--){
+        for (i = 0; i < 42; i++){
+          if (squares[i] === "red") {
+            connected++;
+          } else {
+            connected = 0;
+          }
+          if ((connected >= connectedRequirement) && ((squares[i+1] != "blue") || (squares[i-connected] != "blue"))) break;
+        }
+        if (connected >= connectedRequirement && !played)
+        { 
+          console.log(connected);
+          if (squares[i+1] === null) 
+          {
+            console.log("Front Horizontal Defense");
+            squares[i+1] = "blue";
+            played = true;
+          } else if (squares[i-connected] === null)
+          {
+            console.log("Back Horizontal Defense");
+            squares[i-connected] = "blue";
+            played = true;
+          } else 
+          {
+            i = this.getRandomInt(42);
+            console.log("Random Pick Inside of Horizontal Connected");
+            squares[i] = "blue";
+            played = true;
+          }
+        } else {
+          let done = false;
+          connected = 0;
+          for (var j = 0; j < 7; j++)
+          {
+              for (i = j; i < 42; i += 7)
+              {
+                  if (squares[i] === "red")
+                  {
+                      connected += 1;
+                      console.log("Vertical Connected: " + connected);
+                      if ((connected >= connectedRequirement) && ((squares[i+7] != "blue") || (squares[i-(connected*7)] != "blue"))) {
+                        console.log("vertical break");
+                        done = true;
+                        break;
+                      }
+                  } 
+                  else
+                  {
+                    connected = 0;
+                  }
+              }
+              if (done) break;
+              connected = 0;
+          }
+          if (connected >= connectedRequirement  && !played) 
+          {
+            console.log(connected);
+            if (i <= 34 && squares[i+7] === null)
+            {
+              console.log("Bottom Vertical Defense");
+              squares[i+7] = "blue";
+              played = true;
+            }
+            else if (squares[i-(connected*7)] === null)
+            {
+              console.log("Top Vertical Defense");
+              squares[i-(connected*7)] = "blue";
+              played = true;
+            } else 
+            {
+              i = this.getRandomInt(42);
+              console.log("Random Pick Inside of Vertical Connected");
+              squares[i] = "blue";
+              played = true;
+            }
+          } else {
+            let direction;
+            let done = false;
+            connected = 0;
+            console.log("Diagonal here");
+            for (i = 0; i < 42; i++)
+            {
+              if (squares[i] === "red") 
+              {
+                connected = 1;
+                if ((i % 7) <= 3 && !done)
+                {
+                  var j = i;
+                  while (connected > 0){
+                    if(squares[j+8] === "red"){
+                      connected++;
+                      j += 8;
+                      if (connected >= connectedRequirement) {
+                        console.log("Diagonal Break");
+                        direction = "left";
+                        done = true;
+                        i = j;
+                        break;
+                      }
+                    } else connected = 0;
+                  }
+                }
+                if (done) break;
+                connected = 1;
+                if ((i % 7) >= 3 && !done){
+                  var x = i;
+                  while (connected > 0)
+                  {
+                    if(squares[x+6] === "red"){
+                      connected++;
+                      x += 6;
+                      if (connected >= connectedRequirement) {
+                        console.log("Diagonal Break 2");
+                        direction = "right";
+                        done = true;
+                        i = x;
+                        break;
+                      }
+                    }else connected = 0;
+                  }
+                }
+                if (done) break;
+              }
+            }
+            if (connected >= connectedRequirement && !played) {
+              console.log("Diagonal Check 2");
+              if (direction === "left") {
+                if (i < 34 && (i%7 < 6) && (squares[i+8] === null)){
+                  console.log("Botton Left Diagonal Defense");
+                  squares[i+8] = "blue"; 
+                  console.log(i);
+                  played = true;                   
+                } else if (squares[i-(connected*8)] === null) {  
+                  console.log("Top Left Diagonal Defense");
+                  squares[i-(connected*8)] = "blue";
+                  console.log(i);
+                  played = true;
+                }
+
+              } else if (direction === "right") {
+                if (i < 35 && (i%7 > 0) && (squares[i+6] === null)) {
+                  console.log("Top Right Diagonal Defense");
+                  squares[i+6] = "blue";
+                  console.log(i);
+                  played = true;
+                } else if (squares[i-(connected*6)] === null) {  
+                  console.log("Top Right Diagonal Defense");
+                  squares[i-(connected*6)] = "blue";
+                  console.log(i);
+                  played = true;
+                }
+              }
+            }
+            if (connectedRequirement < 2  && !played) {
+              i = this.getRandomInt(42);
+              console.log("Random Pick Outside of Connected");
+              squares[i] = "blue";
+              played = true;
+            }
+          }
+        }
+        console.log(this.state.squares)
+        this.setState({
+          squares: squares,
+          redIsNext: true,
+        })
+        if (played) break;
+      }
     }
 
     handleClick(i) {
@@ -162,6 +317,7 @@ const logic = require('./logic.js')
     }
 
     render() {
+      
       let gameover = false;
       let full = this.fullBoard();
       let currentTurn = this.state.redIsNext ? "blue" : "red";
@@ -271,7 +427,7 @@ const logic = require('./logic.js')
       return (
         <div>
           <h3>Made by David Sanders for CSCI 310: JavaScript</h3>
-          <p>v 0.1.8.4</p>
+          <p>v 0.2.1</p>
         </div>
       )
     }
@@ -289,9 +445,8 @@ const logic = require('./logic.js')
             <Board />
           </div>
           <div className="game-info">
-            <div>
-              <Instructions />
-            </div>
+            <SignUp/>
+            <SignIn />
           </div>
         </div>
         <Credits/>

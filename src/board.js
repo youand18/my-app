@@ -6,19 +6,20 @@ function board()
 {
     console.clear();
     var j = 0;
+    var i = 0
     for (i in boardValues)
     {
         process.stdout.write(boardValues[i]);
         process.stdout.write("  ");
         j++;
-        if (j % 7 == 0)
+        if (j % 7 === 0)
         {
             console.log("\n");
         }    
     }
     console.log("-------------------")
     var bottomLine = "";
-    for (var i = 0; i < 7; i++)
+    for (i = 0; i < 7; i++)
     {
         bottomLine += i;
         bottomLine += "  ";
@@ -61,19 +62,19 @@ function updateBoard(space, currentTurn)
     if (i > 6 || i < 0) return -1;
     for (i; i < boardValues.length; i += 7)
     {
-        if ((boardValues[i] == 'R' || boardValues[i] == 'B') && i < 7)
+        if ((boardValues[i] === 'R' || boardValues[i] == 'B') && i < 7)
         {
             board();
             console.log("Selected Row is Full");
             return -1;
         }
-        if ((boardValues[i] == 'R' || boardValues[i] == 'B') && i > 6)
+        if ((boardValues[i] === 'R' || boardValues[i] == 'B') && i > 6)
         {
             boardValues[i-7] = currentTurn;
             board();
             return i-7;
         }
-        if ((boardValues[i] == 'O') && i > 34)
+        if ((boardValues[i] === 'O') && i > 34)
         {
             boardValues[i] = currentTurn;
             board();
